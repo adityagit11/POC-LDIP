@@ -11,6 +11,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +62,11 @@ class DataInsert
 	private static long sizeInBytes;
 	*/
 	
+	public static String getFilePath()
+	{
+		return filePath;
+	}
+
 	public static String getFileName()
 	{
 		return fileName;
@@ -68,6 +74,9 @@ class DataInsert
 	
 	public static void run(HttpServletRequest request, HttpServletResponse response)
 	{
+		/*
+		 * Setting the limit of max 
+		 * upload size is 50MB*/
 		maxFileSize = 50000 * 1024;
 		maxMemSize = 50000 * 1024;
 		
@@ -112,7 +121,7 @@ class DataInsert
 		                  file = new File( filePath + fileName.substring(fileName.lastIndexOf("\\")+1)) ;
 		               }
 		               fi.write( file ) ;
-		               System.out.println("Uploaded Filename: " + filePath + fileName);
+		               System.out.println("DONE! Uploading Filename: " + filePath + fileName + " to the server drive");
 		            }
 		        }
 		      } 
@@ -123,7 +132,7 @@ class DataInsert
 		} 
 		else 
 		{
-		      System.out.println("No file is uploaded");
+		      System.out.println("No file is uploaded to server drive");
 	   	}
 	}
 }
@@ -175,8 +184,6 @@ class DataPush
     private static final String VIDEO_FILE_FORMAT = "video/*";
     private static List<String> scopes;
     
-    private static String SAMPLE_VIDEO_FILENAME = "panther.mp4";
-    
     /*
      * Uploaded video members*/
     private static String uploadedVideoId;
@@ -192,7 +199,7 @@ class DataPush
     	return uploadedVideoTitle;
     }
     
-    public static void uploadVideo()
+    public static void uploadVideo(String filePath, String fileName)
     {
     	scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
         try 
@@ -204,7 +211,7 @@ class DataPush
             youtube = new YouTube.Builder(Authentication.HTTP_TRANSPORT, Authentication.JSON_FACTORY, credential).setApplicationName(
                     "youtube-cmdline-uploadvideo-sample").build();
 
-            System.out.println("Uploading: " + SAMPLE_VIDEO_FILENAME);
+            System.out.println("Uploading: " + fileName);
 
             Video videoObjectDefiningMetadata = new Video();
             		
@@ -230,7 +237,7 @@ class DataPush
             videoObjectDefiningMetadata.setSnippet(snippet);
             
             //The video to upload get's here
-            InputStream in = new FileInputStream("E:\\JavaTech\\POC-data\\Data\\panther.mp4");
+            InputStream in = new FileInputStream(filePath+fileName);
             InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, in);
             YouTube.Videos.Insert videoInsert = youtube.videos().insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
             MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
@@ -284,9 +291,16 @@ class DataPush
     }
 }
 
+/*
+ * The controller class for 
+ * LDIP. It works in 3 stages
+ * 1. User upload the video from drive to Server
+ * 2. Server pushes the file from its drive to youtube channel*/
 public class MediaControl extends HttpServlet 
 {
 	private static final long serialVersionUID = 1L;
+	private static String fileName;
+	private static String filePath;
 	
 	public MediaControl() 
 	{
@@ -299,10 +313,12 @@ public class MediaControl extends HttpServlet
 	{
 		System.out.println("Media transfer protocol activated..");
 		DataInsert.run(request, response);
-		System.out.println(DataInsert.getFileName());
-		/*
-		DataPush.uploadVideo();
-		System.out.println(DataPush.getUploadedVideoId());
-		*/
+		fileName = DataInsert.getFileName();
+		filePath = DataInsert.getFilePath();
+		DataPush.uploadVideo(filePath, fileName);
+		String videoId = DataPush.getUploadedVideoId();
+		request.setAttribute("videoid", videoId);
+		RequestDispatcher view = request.getRequestDispatcher("result.jsp");
+		view.forward(request, response);
 	}
 }
