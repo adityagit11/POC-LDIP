@@ -42,6 +42,12 @@ import com.google.api.services.youtube.model.Video;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
 import com.google.common.collect.Lists;
+import com.restfb.DefaultFacebookClient;
+import com.restfb.FacebookClient;
+import com.restfb.Parameter;
+import com.restfb.types.FacebookType;
+import com.restfb.types.Page;
+import com.restfb.types.User;
 
 class DataInsert
 {
@@ -178,7 +184,7 @@ class Authentication
     }
 }
 
-class DataPush
+class DataPushY
 {
 	private static YouTube youtube;
     private static final String VIDEO_FILE_FORMAT = "video/*";
@@ -199,7 +205,7 @@ class DataPush
     	return uploadedVideoTitle;
     }
     
-    public static void uploadVideo(String filePath, String fileName)
+    public static void uploadVideo(String FILE_PATH, String FILE_NAME)
     {
     	scopes = Lists.newArrayList("https://www.googleapis.com/auth/youtube.upload");
         try 
@@ -211,7 +217,7 @@ class DataPush
             youtube = new YouTube.Builder(Authentication.HTTP_TRANSPORT, Authentication.JSON_FACTORY, credential).setApplicationName(
                     "youtube-cmdline-uploadvideo-sample").build();
 
-            System.out.println("Uploading: " + fileName);
+            System.out.println("Uploading: " + FILE_NAME);
 
             Video videoObjectDefiningMetadata = new Video();
             		
@@ -237,7 +243,7 @@ class DataPush
             videoObjectDefiningMetadata.setSnippet(snippet);
             
             //The video to upload get's here
-            InputStream in = new FileInputStream(filePath+fileName);
+            InputStream in = new FileInputStream(FILE_PATH + FILE_NAME);
             InputStreamContent mediaContent = new InputStreamContent(VIDEO_FILE_FORMAT, in);
             YouTube.Videos.Insert videoInsert = youtube.videos().insert("snippet,statistics,status", videoObjectDefiningMetadata, mediaContent);
             MediaHttpUploader uploader = videoInsert.getMediaHttpUploader();
@@ -269,6 +275,10 @@ class DataPush
             // Call the API and upload the video.
             Video returnedVideo = videoInsert.execute();
             
+            /*
+             * These two methods getId() and getTitle()
+             * called on Video object returns the ID and TITLE of the
+             * video uploaded by the user.*/
             uploadedVideoId = returnedVideo.getId();
             uploadedVideoTitle = returnedVideo.getSnippet().getTitle();
 
@@ -307,16 +317,46 @@ public class MediaControl extends HttpServlet
         super();
     }
 	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {}
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+	{
+		//We don't require the method right now
+	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
 		System.out.println("Media transfer protocol activated..");
+		
+		/*
+		 * First step of LDIP which is Video Insertion
+		 * The below statis method run() on Class DataInsert
+		 * copies the file from client's drive to the 
+		 * server's drive*/
 		DataInsert.run(request, response);
+		
+		/*
+		 * After copying the file we get two 
+		 * Strings regarding the server's system
+		 * 1. FILE_NAME
+		 * 2. FILE_PATH
+		 * 
+		 * and we forward this to the DataPushY class
+		 * for later operations.
+		 * */
 		fileName = DataInsert.getFileName();
 		filePath = DataInsert.getFilePath();
-		DataPush.uploadVideo(filePath, fileName);
-		String videoId = DataPush.getUploadedVideoId();
+		
+		/*
+		 * The following method uploadVideo() on 
+		 * Class DataPushY uploads the video on the 
+		 * Youtube's channel using the clinet_secrets.json file.
+		 * */
+		DataPushY.uploadVideo(filePath, fileName);
+		String videoId = DataPushY.getUploadedVideoId();
+		
+		/*
+		 * The last step is to obtain the video ID
+		 * and push it to the result.jsp
+		 * */
 		request.setAttribute("videoid", videoId);
 		RequestDispatcher view = request.getRequestDispatcher("result.jsp");
 		view.forward(request, response);

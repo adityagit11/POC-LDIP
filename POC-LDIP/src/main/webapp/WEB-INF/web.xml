@@ -10,8 +10,18 @@
   	<description></description>
   	<servlet-class>org.isha.aditya.poc.controller.MediaControl</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>MediaControlFB</servlet-name>
+  	<display-name>MediaControlFB</display-name>
+  	<description></description>
+  	<servlet-class>org.isha.aditya.poc.controller.MediaControlFB</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>MediaControl</servlet-name>
   	<url-pattern>/ldipmedia</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>MediaControlFB</servlet-name>
+  	<url-pattern>/media2</url-pattern>
   </servlet-mapping>
 </web-app>
