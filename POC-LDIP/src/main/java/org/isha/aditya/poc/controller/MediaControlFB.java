@@ -139,11 +139,15 @@ class DataPushF
 	 * permission. Once you have the user access 
 	 * token you then get the page access token via the Graph API.*/
 	
-	private static final String ACCESS_TOKEN = "EAACEdEose0cBAAFvChte7RohVGqSiC5XkaPt2MKiTi3qcSipUBwIGA6ULNUpPQy6jmMJEoxdXKLERr7opN76NRYVC4Nvzr1UBeNZCWTII5o4xBtdrJi2cFX4BKe4B8hlNSbIaFu4Y9NvKoexyPsleW5mK5Q9y7Qb9Exeojdtt0ZAZArOzihsLn3OvpbqerbAMb6jFIeFwZDZD";
+	private static final String ACCESS_TOKEN = "EAACEdEose0cBAJL1OOA6jvs5DErFh3dvuLtk2i7z6i02pOc3c3Mj6Lc6vAwNFRLRGmd3xXQq9SSqFZBLGZByGpSKc4OEXsZCo8ydBbsbi6BZBcojvmtBaHLZAr5tVNVZB90ZAoHjUYtEozx7m9pJPnLWJXWdLDEoFJxxgjoBEXUS5n64oAIXNqfVpvXEGANLPmNiX9p9bORZBQZDZD";
 	private static final String APP_ID = "";
 	private static final String APP_SECTRET = "";
 	private static final String PAGE_ID = "888792104477727";
 	
+	/*
+	 * This below method
+	 * pushes the text onto facebook
+	 * */
 	public static void pushText(String message)
 	{
 		String TEXT_POST = message;
@@ -374,17 +378,62 @@ public class MediaControlFB extends HttpServlet {
 		fileName = DataInsert.getFileName();
 		filePath = DataInsert.getFilePath();
 
-		//DataPushF.pushText(MESSAGE);
+		/*
+		 * To upload a new content
+		 * using the page-admin credentials
+		 * the vendor has three options
+		 * 
+		 * 1. Push text-message to facebook page
+		 * 2. Push picture to facebook page
+		 * 3. Push small video (~ 100 MB) to facebook page
+		 * 4. Push large video (~ 2 GB) to facebook page
+		 * 5. Create a new album on facebook page
+		 * 6. Push successive picture to above album on facebook page
+		 * 7. Get the like, share, comment count back from the above Picture
+		 * */
+		
+		DataPushF.pushText("TEST 1");
+		//String POST_ID = DataPushF.pushPicture(filePath, fileName);
 		//DataPushF.pushSmallVideo(filePath, fileName);
 		//DataPushF.pushLargeVideo(filePath, fileName);
-		String result = DataPushF.pushPicture(filePath, fileName);
+		
+		//long likeCount = DataPushF.getLikeCount(POST_ID);
+		//System.out.println(likeCount);
+		
+		
+		//long commentCount = DataPushF.getCommentCount(POST_ID);
+		//System.out.println(commentCount);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		/*
-		if(result.equals("-1"))
+		//FAIL SAFE WAY
+		if(POST_ID.equals("-1"))
 			System.out.println("Failed!");
 		else
 		{
-			String postId = result;
+			String postId = POST_ID;
 			long likeCount = DataPushF.getLikeCount(postId);
 			long shareCount = DataPushF.getShareCount(postId);
 			long commentCount = DataPushF.getCommentCount(postId);
@@ -393,7 +442,48 @@ public class MediaControlFB extends HttpServlet {
 		}
 		*/
 		
-		String albumId = DataPushF.createNewAlbum("APEX", "THIS IS GOOD");
-		DataPushF.pushPictureToAlbum(albumId, filePath, fileName);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*
+		 * To create a new album you 
+		 * Vendor has to first create a new
+		 * empty albumn. The album will be created on day-basis
+		 * So every day a new album will be created.
+		 * To create a new album:
+		 * */
+		//String ALBUM_ID = DataPushF.createNewAlbum("THIS IS ALBUM NAME", "THIS IS ALBUM DESCRIPTION");
+		
+		/*
+		 * Now once the vendor creates a new album
+		 * you can push multiple images to this albumn
+		 * */
+		//DataPushF.pushPictureToAlbum(ALBUM_ID, filePath, fileName);
 	}
 }

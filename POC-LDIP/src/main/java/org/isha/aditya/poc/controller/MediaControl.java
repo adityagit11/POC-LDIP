@@ -39,6 +39,7 @@ import com.google.api.client.util.store.DataStore;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Video;
+import com.google.api.services.youtube.model.VideoGetRatingResponse;
 import com.google.api.services.youtube.model.VideoSnippet;
 import com.google.api.services.youtube.model.VideoStatus;
 import com.google.common.collect.Lists;
@@ -299,6 +300,27 @@ class DataPushY
             t.printStackTrace();
         }
     }
+    
+    /*
+    public static VideoGetRatingResponse getRating(String VIDEO_ID)
+    {
+    	YouTube service = getYoutubeService();
+    	
+    	try {
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put("id", "Ks-_Mh1QhMc,c0KYU2j0TM4,eIho2S0ZahI");
+            parameters.put("onBehalfOfContentOwner", "");
+
+            YouTube.Videos.GetRating videosGetRatingRequest = youtube.videos().getRating(parameters.get("id").toString());
+            if (parameters.containsKey("onBehalfOfContentOwner") && parameters.get("onBehalfOfContentOwner") != "") {
+                videosGetRatingRequest.setOnBehalfOfContentOwner(parameters.get("onBehalfOfContentOwner").toString());
+            }
+
+            VideoGetRatingResponse response = videosGetRatingRequest.execute();
+            System.out.println(response);
+        }
+    }
+    */
 }
 
 /*
