@@ -216,7 +216,7 @@ class DataPushY
 
             // This object is used to make YouTube Data API requests.
             youtube = new YouTube.Builder(Authentication.HTTP_TRANSPORT, Authentication.JSON_FACTORY, credential).setApplicationName(
-                    "youtube-cmdline-uploadvideo-sample").build();
+                    "youtube-cmdline-application-isha").build();
 
             System.out.println("Uploading: " + FILE_NAME);
 
