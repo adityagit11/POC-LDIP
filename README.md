@@ -11,3 +11,7 @@ Technologies used:
 - Apache Commons IO
 - Youtube Data API v3
 - Google O'Auth Client Jetty
+
+To generate Permanent access token for facebook:
+
+Put a GET request to this: https://graph.facebook.com/v2.9/oauth/access_token?grant_type=fb_exchange_token&client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&fb_exchange_token=SHORT_LIVED_ACCESS_TOKEN
